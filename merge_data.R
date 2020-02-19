@@ -25,7 +25,7 @@ wave3_locations <- paste0(box_loc, '/inputData/arabbarometer/ABWaveIIIPalestinew
   read_dta() %>%
   .[,1:5]
 
-wave3_survey <- read.csv("/Users/christianbaehr/Downloads/ab_website_data/ABIII_English.csv", stringsAsFactors = F)
+wave3_survey <- read.csv(paste0(box_loc, "/inputData/ABIII_English.csv"), stringsAsFactors = F)
 wave3_survey <- wave3_survey[wave3_survey$country=="Palestine", ]
 
 for(i in 1:nrow(locations)) {
@@ -55,7 +55,8 @@ wave3$v03 <- "West Bank"
 
 #################################################
 
-wave4_survey <- read.csv("/Users/christianbaehr/Downloads/ab_website_data/ABIV_English.csv", stringsAsFactors = F)
+wave4_survey <- read.csv(paste0(box_loc, "/inputData/ABIV_English.csv"), stringsAsFactors = F)
+
 wave4_survey <- wave4_survey[wave4_survey$country=="Palestine", ]
 
 # locations$merge <- tolower(locations$v05aENG)
@@ -157,6 +158,8 @@ test4 <- wave4
 
 #################################################
 
+### Wave 3 Demographics ###
+
 test3$age <- as.numeric(test3$q1001)
 
 test3$male <- ifelse(test3$q1002=="Male", 1, 0)
@@ -215,6 +218,104 @@ test3$own_a_computer <- ifelse(test3$q1011a=="Yes", 1,
 test3$own_a_car <- ifelse(test3$q1011b=="Yes", 1,
                           ifelse(test3$q1011b=="No", 0, NA))
 
+### Wave 3 Domestic Governance ###
+
+# How would you evaluate the current economic situation in your country?
+test3$q101 <- ifelse(test3$q101=="Very good", 2,
+                     ifelse(test3$q101=="Good", 1,
+                            ifelse(test3$q101=="Bad", -1,
+                                   ifelse(test3$q101=="Very bad", -2, NA))))
+
+# What do you think will be the economic situation in your country during the next few years (3-5 years) compared to the current situation?
+test3$q102 <- ifelse(test3$q102=="Much better", 2,
+                     ifelse(test3$q102=="Somewhat better", 1,
+                            ifelse(test3$q102=="Almost the same as the current situation", 0,
+                                   ifelse(test3$q102=="Somewhat worse", -1,
+                                          ifelse(test3$q102=="Much worse", -2, NA)))))
+
+# to what extent do you trust: the government (cabinet)
+test3$q2011 <- ifelse(test3$q2011=="I trust it to a great extent", 4,
+                      ifelse(test3$q2011=="I trust it to a medium extent", 3,
+                             ifelse(test3$q2011=="I trust it to a limited extent", 2,
+                                    ifelse(test3$q2011=="I absolutely do not trust it", 1, NA))))
+
+
+# to what extent do you trust: The elected council of representatives (the parliament)
+test3$q2013 <- ifelse(test3$q2013=="I trust it to a great extent", 4,
+                      ifelse(test3$q2013=="I trust it to a medium extent", 3,
+                             ifelse(test3$q2013=="I trust it to a limited extent", 2,
+                                    ifelse(test3$q2013=="I absolutely do not trust it", 1, NA))))
+
+# to what extent do you trust: Public Security (the police)
+# test3$q2014 <- ifelse(test3$q2014=="I trust it to a great extent", 4,
+#                       ifelse(test3$q2014=="I trust it to a medium extent", 3,
+#                              ifelse(test3$q2014=="I trust it to a limited extent", 2,
+#                                     ifelse(test3$q2014=="I absolutely do not trust it", 1, NA))))
+
+# to what extent do you trust: The armed forces (the army)
+# test3$q2016 <- ifelse(test3$q2016=="I trust it to a great extent", 4,
+#                       ifelse(test3$q2016=="I trust it to a medium extent", 3,
+#                              ifelse(test3$q2016=="I trust it to a limited extent", 2,
+#                                     ifelse(test3$q2016=="I absolutely do not trust it", 1, NA))))
+
+# How would you evaluate the performance of the government in carrying out its tasks and duties?
+# test3$q2031 <- ifelse(test3$q2031=="Very good", 2,
+#                       ifelse(test3$q2031=="Good", 1,
+#                              ifelse(test3$q2031=="Neither good nor bad", 0,
+#                                     ifelse(test3$q2031=="Bad", -1,
+#                                            ifelse(test3$q2031=="Very bad", -2, NA)))))
+
+# How would you evaluate the performance of the Parliament in carrying out its tasks and duties?
+# test3$q2032 <- ifelse(test3$q2032=="Very good", 2,
+#                       ifelse(test3$q2032=="Good", 1,
+#                              ifelse(test3$q2032=="Neither good nor bad", 0,
+#                                     ifelse(test3$q2032=="Bad", -1,
+#                                            ifelse(test3$q2032=="Very bad", -2, NA)))))
+
+# How would you evaluate the performance of the judiciary in carrying out its tasks and duties?
+# test3$q2033 <- ifelse(test3$q2033=="Very good", 2,
+#                       ifelse(test3$q2033=="Good", 1,
+#                              ifelse(test3$q2033=="Neither good nor bad", 0,
+#                                     ifelse(test3$q2033=="Bad", -1,
+#                                            ifelse(test3$q2033=="Very bad", -2, NA)))))
+
+# How would you evaluate the performance of the police in carrying out its tasks and duties?
+# test3$q2034 <- ifelse(test3$q2034=="Very good", 2,
+#                       ifelse(test3$q2034=="Good", 1,
+#                              ifelse(test3$q2034=="Neither good nor bad", 0,
+#                                     ifelse(test3$q2034=="Bad", -1,
+#                                            ifelse(test3$q2034=="Very bad", -2, NA)))))
+
+# If you were to evaluate the state of democracy and human rights in your country today, would you say that they are
+# test3$q504 <- ifelse(test3$q504=="Very good", 2,
+#                      ifelse(test3$q504=="Good", 1,
+#                             ifelse(test3$q504=="Neither good nor bad", 0,
+#                                    ifelse(test3$q504=="Bad", -1,
+#                                           ifelse(test3$q504=="Very bad", -2, NA)))))
+
+# In your opinion, to what extent is your country democratic?
+test3$q511 <- as.numeric(ifelse(test3$q511=="Democratic to the greatest extent possible", 10,
+                                ifelse(test3$q511=="No democracy whatsoever", 0,
+                                       ifelse(!is.na(as.numeric(test3$q511)), test3$q511, NA))))
+
+# To what extent are you satisfied with the government’s performance?
+test3$q513 <- as.numeric(ifelse(test3$q513=="Completely satisfied", 10,
+                                ifelse(test3$q513=="Absolutely unsatisfied", 0,
+                                       ifelse(!is.na(as.numeric(test3$q513)), test3$q513, NA))))
+# Democratic regimes are indecisive and full of problems. To what extent do you agree?
+test3$q5162 <- ifelse(test3$q5162=="I strongly agree", 2,
+                      ifelse(test3$q5162=="I somewhat agree", 1,
+                             ifelse(test3$q5162=="I somewhat disagree", -1,
+                                    ifelse(test3$q5162=="I strongly disagree", -2, NA))))
+
+
+
+
+
+
+### Wave 3 International Relations ###
+
+## future economic relations btwn palestine/us
 test3$q7001 <- ifelse(test3$q7001=="Become stronger than they were in previous years", 1, 
                       ifelse(test3$q7001=="Become weaker than they were in previous years", -1, 
                              ifelse(test3$q7001=="Remain the same as they were in previous years", 0, NA)))
@@ -270,6 +371,8 @@ test3$q706 <- ifelse(test3$q706=="I strongly agree", 2,
 
 #################################################
 
+### Wave 4 Demographics ###
+
 test4$age <- as.numeric(test4$q1001)
 test4$male <- ifelse(test4$q1002=="Male", 1, 0)
 
@@ -314,6 +417,101 @@ test4$student <- ifelse(test4$q1005=="Student", 1,
 
 test4$unemployed <- ifelse(test4$q1005=="Unemployed", 1,
                            ifelse(test4$q1005=="Decline to answer (Do not read)", NA, 0))
+
+### Wave 4 Domestic Governance ###
+
+# How would you evaluate the current economic situation in your country?
+test4$q101 <- ifelse(test4$q101=="Very good", 2,
+                     ifelse(test4$q101=="Good", 1,
+                            ifelse(test4$q101=="Bad", -1,
+                                   ifelse(test4$q101=="Very bad", -2, NA))))
+
+# What do you think will be the economic situation in your country during the next few years (3-5 years) compared to the current situation?
+test4$q102 <- ifelse(test4$q102=="Much better", 2,
+                     ifelse(test4$q102=="Somewhat better", 1,
+                            ifelse(test4$q102=="Almost the same as the current situation", 0,
+                                   ifelse(test4$q102=="Somewhat worse", -1,
+                                          ifelse(test4$q102=="Much worse", -2, NA)))))
+
+# to what extent do you trust: the government (cabinet)
+test4$q2011 <- ifelse(test4$q2011=="A great deal of trust", 4,
+                      ifelse(test4$q2011=="Quite a lot of trust", 3,
+                             ifelse(test4$q2011=="Not very much trust", 2,
+                                    ifelse(test4$q2011=="No trust at all", 1, NA))))
+
+
+# to what extent do you trust: The elected council of representatives (the parliament)
+test4$q2013 <- ifelse(test4$q2013=="A great deal of trust", 4,
+                      ifelse(test4$q2013=="Quite a lot of trust", 3,
+                             ifelse(test4$q2013=="Not very much trust", 2,
+                                    ifelse(test4$q2013=="No trust at all", 1, NA))))
+
+# to what extent do you trust: Public Security (the police)
+# test3$q2014 <- ifelse(test3$q2014=="I trust it to a great extent", 4,
+#                       ifelse(test3$q2014=="I trust it to a medium extent", 3,
+#                              ifelse(test3$q2014=="I trust it to a limited extent", 2,
+#                                     ifelse(test3$q2014=="I absolutely do not trust it", 1, NA))))
+
+# to what extent do you trust: The armed forces (the army)
+# test3$q2016 <- ifelse(test3$q2016=="I trust it to a great extent", 4,
+#                       ifelse(test3$q2016=="I trust it to a medium extent", 3,
+#                              ifelse(test3$q2016=="I trust it to a limited extent", 2,
+#                                     ifelse(test3$q2016=="I absolutely do not trust it", 1, NA))))
+
+# How would you evaluate the performance of the government in carrying out its tasks and duties?
+# test3$q2031 <- ifelse(test3$q2031=="Very good", 2,
+#                       ifelse(test3$q2031=="Good", 1,
+#                              ifelse(test3$q2031=="Neither good nor bad", 0,
+#                                     ifelse(test3$q2031=="Bad", -1,
+#                                            ifelse(test3$q2031=="Very bad", -2, NA)))))
+
+# How would you evaluate the performance of the Parliament in carrying out its tasks and duties?
+# test3$q2032 <- ifelse(test3$q2032=="Very good", 2,
+#                       ifelse(test3$q2032=="Good", 1,
+#                              ifelse(test3$q2032=="Neither good nor bad", 0,
+#                                     ifelse(test3$q2032=="Bad", -1,
+#                                            ifelse(test3$q2032=="Very bad", -2, NA)))))
+
+# How would you evaluate the performance of the judiciary in carrying out its tasks and duties?
+# test3$q2033 <- ifelse(test3$q2033=="Very good", 2,
+#                       ifelse(test3$q2033=="Good", 1,
+#                              ifelse(test3$q2033=="Neither good nor bad", 0,
+#                                     ifelse(test3$q2033=="Bad", -1,
+#                                            ifelse(test3$q2033=="Very bad", -2, NA)))))
+
+# How would you evaluate the performance of the police in carrying out its tasks and duties?
+# test3$q2034 <- ifelse(test3$q2034=="Very good", 2,
+#                       ifelse(test3$q2034=="Good", 1,
+#                              ifelse(test3$q2034=="Neither good nor bad", 0,
+#                                     ifelse(test3$q2034=="Bad", -1,
+#                                            ifelse(test3$q2034=="Very bad", -2, NA)))))
+
+# If you were to evaluate the state of democracy and human rights in your country today, would you say that they are
+# test3$q504 <- ifelse(test3$q504=="Very good", 2,
+#                      ifelse(test3$q504=="Good", 1,
+#                             ifelse(test3$q504=="Neither good nor bad", 0,
+#                                    ifelse(test3$q504=="Bad", -1,
+#                                           ifelse(test3$q504=="Very bad", -2, NA)))))
+
+# In your opinion, to what extent is your country democratic?
+test4$q511 <- as.numeric(ifelse(test4$q511=="Complete democracy", 10,
+                                ifelse(test4$q511=="Complete dictatorship", 0,
+                                       ifelse(!is.na(as.numeric(test4$q511)), test4$q511, NA))))
+
+# To what extent are you satisfied with the government’s performance?
+test4$q513 <- as.numeric(ifelse(test4$q513=="Completely satisfied", 10,
+                                ifelse(test4$q513=="Completely unsatisfied", 0,
+                                       ifelse(!is.na(as.numeric(test4$q513)), test4$q513, NA))))
+
+# Democratic regimes are indecisive and full of problems. To what extent do you agree?
+test4$q5162 <- ifelse(test4$q5162=="I strongly agree", 2,
+                      ifelse(test4$q5162=="I agree", 1,
+                             ifelse(test4$q5162=="I disagree", -1,
+                                    ifelse(test4$q5162=="I strongly disagree", -2, NA))))
+
+
+
+### Wave 4 International Relations ###
 
 ### No home ownership question in Wave IV
 
@@ -425,13 +623,13 @@ out_labels <- c("Age",
                 "Owns a car (dummy)")
 
 stargazer(test3@data[, out_names], type = "latex", title = "Wave III Demographics (Full Sample)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/demographics_full_wave3.tex")
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/demographics_full_wave3.tex"))
 
 stargazer(test3@data[test3$treatment==1, out_names], type = "latex", title = "Wave III Demographics (Treatment Only)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/demographics_treatment_wave3.tex")
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/demographics_treatment_wave3.tex"))
 
 stargazer(test3@data[test3$treatment==0, out_names], type = "latex", title = "Wave III Demographics (Control Only)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/demographics_control_wave3.tex")
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/demographics_control_wave3.tex"))
 
 ###
 
@@ -456,15 +654,15 @@ out_labels <- c("Treatment (dummy)",
                 "Refugee Camp (dummy)")
 
 stargazer(test3@data[, out_names], type = "latex", title = "Wave III Covariates (Full Sample)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/covariates_full_wave3.tex", 
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/covariates_full_wave3.tex"), 
           digits.extra = 0)
 
 stargazer(test3@data[test3$treatment==1, out_names], type = "latex", title = "Wave III Covariates (Treatment Only)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/covariates_treatment_wave3.tex",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/covariates_treatment_wave3.tex"),
           digits.extra = 0)
 
 stargazer(test3@data[test3$treatment==0, out_names], type = "latex", title = "Wave III Covariates (Control Only)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/covariates_control_wave3.tex",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/covariates_control_wave3.tex"),
           digits.extra = 0)
 
 ###
@@ -490,21 +688,52 @@ out_labels <- c("Do you prefer economic relations btwn Pal./US improve",
                 "Should foreign aid to your country increase?")
 
 stargazer(test3@data[, out_names], type = "latex", title = "Wave III Survey Questions (Full Sample)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/survey_full_wave3.tex", 
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey_full_wave3.tex"), 
           digits.extra = 0)
 
 stargazer(test3@data[test3$treatment==1, out_names], type = "latex", title = "Wave III Survey Questions (Treatment Only)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/survey_treatment_wave3.tex",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey_treatment_wave3.tex"),
           digits.extra = 0)
 
 stargazer(test3@data[test3$treatment==0, out_names], type = "latex", title = "Wave III Survey Questions (Control Only)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/survey_control_wave3.tex",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey_control_wave3.tex"),
           digits.extra = 0)
 
 ###
 
-writeOGR(obj = test3[names(test3)!="geometry"], dsn = "/Users/christianbaehr/Desktop/wave3.geojson",
+writeOGR(obj = test3[names(test3)!="geometry"], dsn = paste0(box_loc, "/ProcessedData/wave3.geojson"),
          layer = "qid", driver = "GeoJSON")
+
+###
+
+## mapping data
+
+agg_vars <- c("treatment",
+              "education",
+              "dist_to_city",
+              "unemployed",
+              "dmsp_pretrend",
+              "q513",
+              "q7001")
+
+test3_out <- aggregate(test3[, agg_vars], by = list(test3$v05aENG), FUN=mean, na.rm=T)
+
+writeOGR(obj = test3_out[, names(test3_out)!="geometry"], 
+         dsn = paste0(box_loc, "/ProcessedData/wave3_villagelevel.geojson"),
+         layer = "qid", driver = "GeoJSON")
+
+agg_vars <- c("treatment",
+              "education",
+              "unemployed",
+              "q513",
+              "q7001")
+
+test4_out <- aggregate(test4[, agg_vars], by = list(test4$v05aENG), FUN=mean, na.rm=T)
+
+writeOGR(obj = test4_out[, names(test4_out)!="geometry"], 
+         dsn = paste0(box_loc, "/ProcessedData/wave4_villagelevel.geojson"),
+         layer = "qid", driver = "GeoJSON")
+
 
 #################################################
 
@@ -527,13 +756,13 @@ out_labels <- c("Age",
                 "Owns a car (dummy)")
 
 stargazer(test4@data[, out_names], type = "latex", title = "Wave IV Demographics (Full Sample)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/demographics_full_wave4.tex")
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/demographics_full_wave4.tex"))
 
 stargazer(test4@data[test4$treatment==1, out_names], type = "latex", title = "Wave IV Demographics (Treatment Only)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/demographics_treatment_wave4.tex")
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/demographics_treatment_wave4.tex"))
 
 stargazer(test4@data[test4$treatment==0, out_names], type = "latex", title = "Wave IV Demographics (Control Only)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/demographics_control_wave4.tex")
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/demographics_control_wave4.tex"))
 
 
 ###
@@ -563,369 +792,68 @@ out_labels <- c("Do you prefer economic relations btwn Pal./US improve",
                 "To what degree do you feel angry towards the US?")
 
 stargazer(test4@data[, out_names], type = "latex", title = "Wave IV Survey Questions (Full Sample)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/survey_full_wave4.tex", 
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey_full_wave4.tex"), 
           digits.extra = 0)
 
 stargazer(test4@data[test4$treatment==1, out_names], type = "latex", title = "Wave IV Survey Questions (Treatment Only)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/survey_treatment_wave4.tex",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey_treatment_wave4.tex"),
           digits.extra = 0)
 
 stargazer(test4@data[test4$treatment==0, out_names], type = "latex", title = "Wave IV Survey Questions (Control Only)",
-          covariate.labels = out_labels, out = "/Users/christianbaehr/Desktop/survey_control_wave4.tex",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey_control_wave4.tex"),
           digits.extra = 0)
 
 
 ###
 
-writeOGR(obj = test4[names(test4)!="geometry"], dsn = "/Users/christianbaehr/Desktop/wave4.geojson",
+writeOGR(obj = test4[names(test4)!="geometry"], dsn = paste0(box_loc, "/ProcessedData/wave4.geojson"),
          layer = "qid", driver = "GeoJSON")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-#################################################
-#################################################
-
-
-
-
-
-stargazer(test3@data, type = "html", title = "Wave III Summary Statistics (Full Sample)",
-          keep = c("urban", "rural", "refugee_camp", "q7001", "q7002", "q7006", "q700a1", "q700a2", "q700a6", "q706", "q701c", 
-                   "viirs2012max", "population", "dist_to_city", "dmsp_pretrend"),
-          covariate.labels = c("Urban", "Rural", "Refugee camp",
-                               "Do you prefer economic relations btwn Pal./US improve",
-                               "Do you prefer economic relations btwn Pal./Saudi improve",
-                               "Do you prefer economic relations btwn Pal./Israel improve",
-                               "Do you prefer security relations btwn Pal./US improve",
-                               "Do you prefer security relations btwn Pal./Saudi improve",
-                               "Do you prefer security relations btwn Pal./Israel improve",
-                               "Do you agree: US interference justifies arms against the US?",
-                               "Should foreign aid to your country increase?",
-                               "VIIRS Baseline (2012 Max)",
-                               "Population (CIESIN)",
-                               "Distance to nearest city (EU-JRC)",
-                               "DMSP Pre-trend (2007-12)"),
-          out = "/Users/christianbaehr/Desktop/test.html")
-
-stargazer(test3@data[test3$treatment==1, ], type = "html", title = "Wave III Summary Statistics (Treated Only)",
-          keep = c("urban", "rural", "refugee_camp", "q7001", "q7002", "q7006", "q700a1", "q700a2", "q700a6", "q706", "q701c", 
-                   "viirs2012max", "population", "dist_to_city", "dmsp_pretrend"),
-          covariate.labels = c("Urban", "Rural", "Refugee camp",
-                               "Do you prefer economic relations btwn Pal./US improve",
-                               "Do you prefer economic relations btwn Pal./Saudi improve",
-                               "Do you prefer economic relations btwn Pal./Israel improve",
-                               "Do you prefer security relations btwn Pal./US improve",
-                               "Do you prefer security relations btwn Pal./Saudi improve",
-                               "Do you prefer security relations btwn Pal./Israel improve",
-                               "Do you agree: US interference justifies arms against the US?",
-                               "Should foreign aid to your country increase?",
-                               "VIIRS Baseline (2012 Max)",
-                               "Population (CIESIN)",
-                               "Distance to nearest city (EU-JRC)",
-                               "DMSP Pre-trend (2007-12)"),
-          out = "/Users/christianbaehr/Desktop/test_treated.html")
-
-stargazer(test3@data[test3$treatment==0, ], type = "html", title = "Wave III Summary Statistics (Control Only)",
-          keep = c("urban", "rural", "refugee_camp", "q7001", "q7002", "q7006", "q700a1", "q700a2", "q700a6", "q706", "q701c", 
-                   "viirs2012max", "population", "dist_to_city", "dmsp_pretrend"),
-          covariate.labels = c("Urban", "Rural", "Refugee camp",
-                               "Do you prefer economic relations btwn Pal./US improve",
-                               "Do you prefer economic relations btwn Pal./Saudi improve",
-                               "Do you prefer economic relations btwn Pal./Israel improve",
-                               "Do you prefer security relations btwn Pal./US improve",
-                               "Do you prefer security relations btwn Pal./Saudi improve",
-                               "Do you prefer security relations btwn Pal./Israel improve",
-                               "Do you agree: US interference justifies arms against the US?",
-                               "Should foreign aid to your country increase?",
-                               "VIIRS Baseline (2012 Max)",
-                               "Population (CIESIN)",
-                               "Distance to nearest city (EU-JRC)",
-                               "DMSP Pre-trend (2007-12)"),
-          out = "/Users/christianbaehr/Desktop/test_control.html")
-
-
-
-
-
-
-
-
-
-#################################################
-#################################################
-
-## future economic relations btwn palestine/us
-wave3$q7001 <- ifelse(wave3$q7001=="Become stronger than they were in previous years", 1, 
-                      ifelse(wave3$q7001=="Become weaker than they were in previous years", -1, 
-                             ifelse(wave3$q7001=="Remain the same as they were in previous years", 0, NA)))
-
-## future economic relations btwn palestine/saudi
-wave3$q7002 <- ifelse(wave3$q7002=="Become stronger than they were in previous years", 1, 
-                      ifelse(wave3$q7002=="Become weaker than they were in previous years", -1, 
-                             ifelse(wave3$q7002=="Remain the same as they were in previous years", 0, NA)))
-
-## future economic relations btwn palestine/israel. Not asked in Wave IV
-wave3$q7006 <- ifelse(wave3$q7006=="Become stronger than they were in previous years", 1, 
-                      ifelse(wave3$q7006=="Become weaker than they were in previous years", -1, 
-                             ifelse(wave3$q7006=="Remain the same as they were in previous years", 0, NA)))
-
-## future security relations btwn palestine/us. Not asked in Wave IV
-wave3$q700a1 <- ifelse(wave3$q700a1=="Become stronger than they were in previous years", 1, 
-                       ifelse(wave3$q700a1=="Become weaker than they were in previous years", -1, 
-                              ifelse(wave3$q700a1=="Remain the same as they were in previous years", 0, NA)))
-
-## future security relations btwn palestine/saudi Not asked in Wave IV
-wave3$q700a2 <- ifelse(wave3$q700a2=="Become stronger than they were in previous years", 1, 
-                       ifelse(wave3$q700a2=="Become weaker than they were in previous years", -1, 
-                              ifelse(wave3$q700a2=="Remain the same as they were in previous years", 0, NA)))
-
-## future security relations btwn palestine/israel. Not asked in Wave IV
-wave3$q700a6 <- ifelse(wave3$q700a6=="Become stronger than they were in previous years", 1, 
-                       ifelse(wave3$q700a6=="Become weaker than they were in previous years", -1, 
-                              ifelse(wave3$q700a6=="Remain the same as they were in previous years", 0, NA)))
-
-## do you want more or less foreign aid? Not asked in Wave IV
-wave3$q701c <- ifelse(wave3$q701c=="Increase a lot", 2,
-                      ifelse(wave3$q701c=="Increase a little", 1,
-                             ifelse(wave3$q701c=="Remain at its current level", 0,
-                                    ifelse(wave3$q701c=="Decrease a little", -1,
-                                           ifelse(wave3$q701c=="Decrease a lot", -2, NA)))))
-
-## impact of foreign investment on people with similar econ conditions as you? Not asked in Wave IV
-wave3$q701d6 <- ifelse(wave3$q701d6=="Very positive", 2,
-                       ifelse(wave3$q701d6=="Somewhat positive", 1,
-                              ifelse(wave3$q701d6=="Has no impact", 0,
-                                     ifelse(wave3$q701d6=="Negative", -1,
-                                            ifelse(wave3$q701d6=="Very negative", -2, NA)))))
-
-## do you think americans are generally good people?
-wave3$q707 <- ifelse(wave3$q707=="I agree", 1,
-                     ifelse(wave3$q707=="I disagree", 0, NA))
-
-## US intervention in the region justifies arms against the US
-wave3$q706 <- ifelse(wave3$q706=="I strongly agree", 2,
-                     ifelse(wave3$q706=="I agree", 1,
-                            ifelse(wave3$q706=="I disagree", -1,
-                                   ifelse(wave3$q706=="I strongly disagree", -2, NA))))
-
 ###
 
-## Wave IV
+out_names <- c("q101",
+               "q102",
+               "q2011",
+               "q2013",
+               "q511",
+               "q513",
+               "q5162")
 
-## future economic relations btwn palestine/us
-wave4$q7001 <- ifelse(wave4$q7001=="Become stronger than they were in previous years", 1, 
-                      ifelse(wave4$q7001=="Become weaker than they were in previous years", -1, 
-                             ifelse(wave4$q7001=="Remain the same as they were in previous years", 0, NA)))
+out_labels <- c("How do you evaluate the current economic state in Pal.?",
+                "Will the economic situation in Pal. be better in 3-5 yrs.?",
+                "To what extent do you trust the government (cabinet)?",
+                "To what extent do you trust the Parliament?",
+                "To what extent is your country democratic?",
+                "How satisfied are you with the governments performance?",
+                "Democratic regimes are indecisive and full of problems. Do you agree?")
 
-## future economic relations btwn palestine/saudi
-wave4$q7002 <- ifelse(wave4$q7002=="Become stronger than they were in previous years", 1, 
-                      ifelse(wave4$q7002=="Become weaker than they were in previous years", -1, 
-                             ifelse(wave4$q7002=="Remain the same as they were in previous years", 0, NA)))
+stargazer(test3@data[, out_names], type = "latex", title = "Wave III Domestic Governance Survey Questions (Full Sample)",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey-dg_full_wave3.tex"), 
+          digits.extra = 0)
+stargazer(test3@data[test3$treatment==1, out_names], type = "latex", title = "Wave III Domestic Governance Survey Questions (Treatment Only)",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey-dg_treatment_wave3.tex"),
+          digits.extra = 0)
+stargazer(test3@data[test3$treatment==0, out_names], type = "latex", title = "Wave III Domestic Governance Survey Questions (Control Only)",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey-dg_control_wave3.tex"),
+          digits.extra = 0)
 
-## do you think americans are generally good people?
-wave4$q707 <- ifelse(wave4$q707=="Agree", 1,
-                     ifelse(wave4$q707=="Disagree", 0, NA))
-
-wave3$urban <- ifelse(wave3$v13=="City", 1, 0)
-wave3$rural <- ifelse(wave3$v13=="Rural", 1, 0)
-wave3$refugee_camp <- ifelse(wave3$v13=="Refugee camp", 1, 0)
-
-wave4$urban <- ifelse(wave4$q13=="Urban", 1, 0)
-wave4$rural <- ifelse(wave4$q13=="Rural", 1, 0)
-wave4$refugee_camp <- ifelse(wave4$q13=="Refugee camp", 1, 0)
-
-###
-
-# wave3 <- wave3[, c("qid", "sex", "v13", "urban", "rural", "refugee_camp", "v03", "v04", "v05aENG", "q7001", "q7002", "q7006", "q700a1", "q700a2", "q700a6", 
-#                    "q706", "q701c", "q701d6", "q707", "geometry")]
-
-# wave4 <- wave4[, c("psu", "q13", "urban", "rural", "refugee_camp", "a1", "q1", "q2", "q7001", "q7002", "q707", "geometry")]
-
-wave3$geometry <- as(wave3$geometry, 'Spatial')
-wave4$geometry <- as(wave4$geometry, 'Spatial')
-
-wave3 <- SpatialPolygonsDataFrame(Sr=wave3$geometry, data = wave3, match.ID = F)
-wave4 <- SpatialPolygonsDataFrame(Sr=wave4$geometry, data = data.frame(wave4), match.ID = F)
-
-###
-
-roads <- st_read(paste0(box_loc, "/inputData/inpii_roads.geojson"), stringsAsFactors = F)
-roads <- SpatialLinesDataFrame(sl = as(roads$geometry, 'Spatial'), data = data.frame(roads), match.ID = F)
-roads <- over(wave3, roads, returnList = T)
-
-extract.dates <- function(x) {
-  
-  y <- as.Date(x[["date"]], tryFormats="%m/%d/%y", optional=T)
-  
-  return(as.character(y[!is.na(y)]))
-  
-}
-
-roads <- lapply(roads, FUN = extract.dates)
-
-wave3 <- as.data.frame(wave3, stringsAsFactors=F)
-
-wave3$roads <- roads
-# wave3$geometry <- as(wave3$geometry, "Spatial")
-wave3 <- SpatialPolygonsDataFrame(Sr=wave3$geometry, data = wave3, match.ID = F)
-wave3$roads <- sapply(wave3$roads, length)
-wave3$treatment <- ifelse(wave3$roads>0, 1, 0)
-
-###
+stargazer(test4@data[, out_names], type = "latex", title = "Wave IV Domestic Governance Survey Questions (Full Sample)",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey-dg_full_wave4.tex"), 
+          digits.extra = 0)
+stargazer(test4@data[test4$treatment==1, out_names], type = "latex", title = "Wave IV Domestic Governance Survey Questions (Treatment Only)",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey-dg_treatment_wave4.tex"),
+          digits.extra = 0)
+stargazer(test4@data[test4$treatment==0, out_names], type = "latex", title = "Wave IV Domestic Governance Survey Questions (Control Only)",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey-dg_control_wave4.tex"),
+          digits.extra = 0)
 
 
-wave3$dmsp2007 <- raster(paste0(box_loc, "/inputData/ntl/dmsp_2007.tif")) %>%
-  extract(., wave3, fun=mean) %>%
-  as.numeric(.)
-
-wave3$dmsp2008 <- raster(paste0(box_loc, "/inputData/ntl/dmsp_2008.tif")) %>%
-  extract(., wave3, fun=mean) %>%
-  as.numeric(.)
-
-wave3$dmsp2009 <- raster(paste0(box_loc, "/inputData/ntl/dmsp_2009.tif")) %>%
-  extract(., wave3, fun=mean) %>%
-  as.numeric(.)
-
-wave3$dmsp2010 <- raster(paste0(box_loc, "/inputData/ntl/dmsp_2010.tif")) %>%
-  extract(., wave3, fun=mean) %>%
-  as.numeric(.)
-
-wave3$dmsp2011 <- raster(paste0(box_loc, "/inputData/ntl/dmsp_2011.tif")) %>%
-  extract(., wave3, fun=mean) %>%
-  as.numeric(.)
-
-wave3$dmsp2012 <- raster(paste0(box_loc, "/inputData/ntl/dmsp_2012.tif")) %>%
-  extract(., wave3, fun=mean) %>%
-  as.numeric(.)
-
-wave3$viirs2012max <- raster(paste0(box_loc, "/inputData/ntl/VIIRS_2012MAX.tif")) %>%
-  extract(., wave3, fun=mean) %>%
-  as.numeric(.)
-
-wave3$population <- raster(paste0(box_loc, "/inputData/population/population_2010_gpw.tif")) %>%
-  extract(., wave3, fun=mean) %>%
-  as.numeric(.)
-
-wave3$dist_to_city <- raster(paste0(box_loc, "/inputData/city_access/accessibility_eujrc.tif")) %>%
-  extract(., wave3, fun=mean) %>%
-  as.numeric(.)
-
-###
-
-# wave4 <- wave4[wave4$psu %in% wave3]
-
-writeOGR(wave3[, names(wave3)!="geometry"], dsn = "/Users/christianbaehr/Desktop/wave3.geojson", layer = "qid", driver = "GeoJSON")
-writeOGR(wave4[, names(wave4)!="geometry"], dsn = "/Users/christianbaehr/Desktop/wave4.geojson", layer = "qid", driver = "GeoJSON")
-
-test3 <- wave3
-test4 <- wave4
-
-test3$dmsp_pretrend <- NA
-
-for(i in unique(test3$qid)) {
-  
-  dmsp <- as.numeric(test3[test3$qid==i, paste0("dmsp", 2007:2012)]@data[1,])
-  
-  trend <- lm(dmsp ~ c(1:6))
-  
-  test3$dmsp_pretrend[test3$qid==i] <- trend$coefficients[2]
-}
 
 
-###
-
-sum(test4$q2 %in% test3$v05aENG)
-sum(test3$v05aENG %in% test4$q2)
-test3$v05aENG[test3$v05aENG=="Al-faraa Refugee"] <- "Al-Faraa Refugee"
-test3$v05aENG[test3$v05aENG=="Askar Refugee"] <- "Askar refugee"
-
-unique(test3$v05aENG[!test3$v05aENG %in% test4$q2])
-test3 <- test3[test3$v05aENG %in% test4$q2,]
-
-unique(test4$q2[!test4$q2 %in% test3$v05aENG])
-test4 <- test4[test4$q2 %in% test3$v05aENG,]
-
-stargazer(test3@data, type = "html", title = "Wave III Summary Statistics (Full Sample)",
-          keep = c("urban", "rural", "refugee_camp", "q7001", "q7002", "q7006", "q700a1", "q700a2", "q700a6", "q706", "q701c", 
-                   "viirs2012max", "population", "dist_to_city", "dmsp_pretrend"),
-          covariate.labels = c("Urban", "Rural", "Refugee camp",
-                               "Do you prefer economic relations btwn Pal./US improve",
-                               "Do you prefer economic relations btwn Pal./Saudi improve",
-                               "Do you prefer economic relations btwn Pal./Israel improve",
-                               "Do you prefer security relations btwn Pal./US improve",
-                               "Do you prefer security relations btwn Pal./Saudi improve",
-                               "Do you prefer security relations btwn Pal./Israel improve",
-                               "Do you agree: US interference justifies arms against the US?",
-                               "Should foreign aid to your country increase?",
-                               "VIIRS Baseline (2012 Max)",
-                               "Population (CIESIN)",
-                               "Distance to nearest city (EU-JRC)",
-                               "DMSP Pre-trend (2007-12)"),
-          out = "/Users/christianbaehr/Desktop/test.html")
-
-stargazer(test3@data[test3$treatment==1, ], type = "html", title = "Wave III Summary Statistics (Treated Only)",
-          keep = c("urban", "rural", "refugee_camp", "q7001", "q7002", "q7006", "q700a1", "q700a2", "q700a6", "q706", "q701c", 
-                   "viirs2012max", "population", "dist_to_city", "dmsp_pretrend"),
-          covariate.labels = c("Urban", "Rural", "Refugee camp",
-                               "Do you prefer economic relations btwn Pal./US improve",
-                               "Do you prefer economic relations btwn Pal./Saudi improve",
-                               "Do you prefer economic relations btwn Pal./Israel improve",
-                               "Do you prefer security relations btwn Pal./US improve",
-                               "Do you prefer security relations btwn Pal./Saudi improve",
-                               "Do you prefer security relations btwn Pal./Israel improve",
-                               "Do you agree: US interference justifies arms against the US?",
-                               "Should foreign aid to your country increase?",
-                               "VIIRS Baseline (2012 Max)",
-                               "Population (CIESIN)",
-                               "Distance to nearest city (EU-JRC)",
-                               "DMSP Pre-trend (2007-12)"),
-          out = "/Users/christianbaehr/Desktop/test_treated.html")
-
-stargazer(test3@data[test3$treatment==0, ], type = "html", title = "Wave III Summary Statistics (Control Only)",
-          keep = c("urban", "rural", "refugee_camp", "q7001", "q7002", "q7006", "q700a1", "q700a2", "q700a6", "q706", "q701c", 
-                   "viirs2012max", "population", "dist_to_city", "dmsp_pretrend"),
-          covariate.labels = c("Urban", "Rural", "Refugee camp",
-                               "Do you prefer economic relations btwn Pal./US improve",
-                               "Do you prefer economic relations btwn Pal./Saudi improve",
-                               "Do you prefer economic relations btwn Pal./Israel improve",
-                               "Do you prefer security relations btwn Pal./US improve",
-                               "Do you prefer security relations btwn Pal./Saudi improve",
-                               "Do you prefer security relations btwn Pal./Israel improve",
-                               "Do you agree: US interference justifies arms against the US?",
-                               "Should foreign aid to your country increase?",
-                               "VIIRS Baseline (2012 Max)",
-                               "Population (CIESIN)",
-                               "Distance to nearest city (EU-JRC)",
-                               "DMSP Pre-trend (2007-12)"),
-          out = "/Users/christianbaehr/Desktop/test_control.html")
 
 
-stargazer(test4@data, type = "html", 
-          keep = c("q7001", "q7002", "q7006", "q700a1", "q700a2", "q700a6", "q706", "q701c", "dmsp_pretrend", 
-                   "viirs2012_max", "population"),
-          covariate.labels = c("Do you prefer economic relations btwn Pal./US improve",
-                               "Do you prefer economic relations btwn Pal./Saudi improve",
-                               "Do you prefer economic relations btwn Pal./Israel improve",
-                               "Do you prefer security relations btwn Pal./US improve",
-                               "Do you prefer security relations btwn Pal./Saudi improve",
-                               "Do you prefer security relations btwn Pal./Israel improve",
-                               "Do you agree: US interference justifies arms against the US?",
-                               "Should foreign aid to your country increase?",
-                               "DMSP Pre-trend (2007-12)",
-                               "VIIRS Baseline (2012 Max)",
-                               "Population (CIESIN)"),
-          out = "/Users/christianbaehr/Desktop/test.html")
+
+
 
 
 
