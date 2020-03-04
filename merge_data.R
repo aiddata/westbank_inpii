@@ -28,6 +28,8 @@ wave3_locations <- paste0(box_loc, '/inputData/arabbarometer/ABWaveIIIPalestinew
 wave3_survey <- read.csv(paste0(box_loc, "/inputData/ABIII_English.csv"), stringsAsFactors = F)
 wave3_survey <- wave3_survey[wave3_survey$country=="Palestine", ]
 
+
+
 for(i in 1:nrow(locations)) {
   
   x <- wave3_locations$v05aENG[which(wave3_locations$qid==locations$qid[i])]
@@ -101,18 +103,18 @@ wave3roads <- lapply(wave3roads, FUN = extract.dates)
 
 # wave3 <- as.data.frame(wave3, stringsAsFactors=F)
 
-wave3$roads <- wave3roads
+wave3$end_dates <- wave3roads
 # wave3$geometry <- as(wave3$geometry, "Spatial")
 # wave3 <- SpatialPolygonsDataFrame(Sr=wave3$geometry, data = wave3, match.ID = F)
-wave3$roads <- sapply(wave3$roads, length)
+wave3$roads <- sapply(wave3$end_dates, length)
 wave3$treatment <- ifelse(wave3$roads>0, 1, 0)
 
 
 wave4roads <- over(wave4, roads, returnList = T)
 wave4roads <- lapply(wave4roads, FUN = extract.dates)
 
-wave4$roads <- wave4roads
-wave4$roads <- sapply(wave4$roads, length)
+wave4$end_dates <- wave4roads
+wave4$roads <- sapply(wave4$end_dates, length)
 wave4$treatment <- ifelse(wave4$roads>0, 1, 0)
 
 ###
@@ -152,6 +154,9 @@ wave3$population <- raster(paste0(box_loc, "/inputData/population/population_201
 wave3$dist_to_city <- raster(paste0(box_loc, "/inputData/city_access/accessibility_eujrc.tif")) %>%
   extract(., wave3, fun=mean) %>%
   as.numeric(.)
+
+###
+
 
 test3 <- wave3
 test4 <- wave4
@@ -530,11 +535,11 @@ test4$q7002 <- ifelse(test4$q7002=="Become stronger than they were in previous y
 
 
 ## influence of US on development of democracy in your country. Not asked in Wave III
-test4$q7011 <- ifelse(test4$q7011=="Very positive", 2,
-                      ifelse(test4$q7011=="Somewhat positive", 1,
-                             ifelse(test4$q7011=="Neither positive nor negative", 0,
-                                    ifelse(test4$q7011=="Somewhat negative", -1,
-                                           ifelse(test4$q7011=="Very negative", -2, NA)))))
+# test4$q7011 <- ifelse(test4$q7011=="Very positive", 2,
+#                       ifelse(test4$q7011=="Somewhat positive", 1,
+#                              ifelse(test4$q7011=="Neither positive nor negative", 0,
+#                                     ifelse(test4$q7011=="Somewhat negative", -1,
+#                                            ifelse(test4$q7011=="Very negative", -2, NA)))))
 
 ## do you think (ordinary) americans are generally good people? Slight variation of Wave III
 test4$q707 <- ifelse(test4$q707=="Agree", 1,
@@ -591,7 +596,16 @@ sum(test3$v05aENG %in% test4$v05aENG)
 
 unique(test3$v05aENG[which(!test3$v05aENG %in% test4$v05aENG)])
 
+
+
+
 test3$v05aENG[test3$v05aENG=="Old-City-Nablus"] <- "Nablus City"
+
+
+
+
+
+
 
 # test3$v05aENG[test3$v05aENG=="Al-faraa Refugee"] <- "Al-Faraa Refugee"
 # test3$v05aENG[test3$v05aENG=="Askar Refugee"] <- "Askar refugee"
@@ -701,8 +715,8 @@ stargazer(test3@data[test3$treatment==0, out_names], type = "latex", title = "Wa
 
 ###
 
-writeOGR(obj = test3[names(test3)!="geometry"], dsn = paste0(box_loc, "/ProcessedData/wave3.geojson"),
-         layer = "qid", driver = "GeoJSON")
+# writeOGR(obj = test3[names(test3)!="geometry"], dsn = paste0(box_loc, "/ProcessedData/wave3.geojson"),
+#          layer = "qid", driver = "GeoJSON")
 
 ###
 
@@ -718,9 +732,9 @@ agg_vars <- c("treatment",
 
 test3_out <- aggregate(test3[, agg_vars], by = list(test3$v05aENG), FUN=mean, na.rm=T)
 
-writeOGR(obj = test3_out[, names(test3_out)!="geometry"], 
-         dsn = paste0(box_loc, "/ProcessedData/wave3_villagelevel.geojson"),
-         layer = "qid", driver = "GeoJSON")
+# writeOGR(obj = test3_out[, names(test3_out)!="geometry"], 
+#          dsn = paste0(box_loc, "/ProcessedData/wave3_villagelevel.geojson"),
+#          layer = "qid", driver = "GeoJSON")
 
 agg_vars <- c("treatment",
               "education",
@@ -730,9 +744,9 @@ agg_vars <- c("treatment",
 
 test4_out <- aggregate(test4[, agg_vars], by = list(test4$v05aENG), FUN=mean, na.rm=T)
 
-writeOGR(obj = test4_out[, names(test4_out)!="geometry"], 
-         dsn = paste0(box_loc, "/ProcessedData/wave4_villagelevel.geojson"),
-         layer = "qid", driver = "GeoJSON")
+# writeOGR(obj = test4_out[, names(test4_out)!="geometry"], 
+#          dsn = paste0(box_loc, "/ProcessedData/wave4_villagelevel.geojson"),
+#          layer = "qid", driver = "GeoJSON")
 
 
 #################################################
@@ -806,8 +820,8 @@ stargazer(test4@data[test4$treatment==0, out_names], type = "latex", title = "Wa
 
 ###
 
-writeOGR(obj = test4[names(test4)!="geometry"], dsn = paste0(box_loc, "/ProcessedData/wave4.geojson"),
-         layer = "qid", driver = "GeoJSON")
+# writeOGR(obj = test4[names(test4)!="geometry"], dsn = paste0(box_loc, "/ProcessedData/wave4.geojson"),
+#          layer = "qid", driver = "GeoJSON")
 
 ###
 
@@ -848,9 +862,215 @@ stargazer(test4@data[test4$treatment==0, out_names], type = "latex", title = "Wa
           digits.extra = 0)
 
 
+#################################################
+
+sum(test3$v05aENG %in% test4$v05aENG)
+sum(test4$v05aENG %in% test3$v05aENG)
+
+sum(test3$v04 %in% test4$v04)
+sum(test4$v04 %in% test3$v04)
+
+agg_vars <- c("treatment",
+              "education",
+              "dist_to_city",
+              "unemployed",
+              "dmsp_pretrend",
+              "population",
+              "viirs2012max")
+
+test3_out <- aggregate(test3[, agg_vars], by = list(test3$v05aENG), FUN=mean, na.rm=T)
+
+test4 <- merge(test4@data, test3_out[, c("Group.1", "population", "dist_to_city", "dmsp_pretrend", "viirs2012max")], 
+               by.x="v05aENG", by.y="Group.1")
+
+test3$wave4 <- 0
+test4$wave4 <- 1
+
+cols <- c("v05aENG",
+          "v04",
+          "male",
+          "age",
+          "education",
+          "married",
+          "muslim",
+          #"income",
+          "urban",
+          "rural",
+          "refugee_camp",
+          "unemployed",
+          "own_a_car",
+          "population",
+          "dist_to_city",
+          "dmsp_pretrend",
+          "viirs2012max",
+          "end_dates",
+          "treatment",
+          "wave4",
+          "q7001",
+          "q7002",
+          "q7011",
+          "q707",
+          #"q708",
+          #"q709a",
+          #"q7114",
+          #"q714us",
+          #"q714sa",
+          #"q714is",
+          #"q8341",
+          "q101",
+          "q102",
+          "q2011",
+          "q2013",
+          "q511",
+          "q513",
+          "q5162")
+
+full_ab <- rbind(test3@data[, cols], test4[, cols])
+
+names(full_ab)[1:2] <- c("village_name", "district_name")
+
+min_enddate <- sapply(full_ab$end_dates, function(x) min(as.Date(x)), simplify = F)
+min_enddate <- do.call("c", min_enddate)
+
+full_ab$EarlyTreat <- ifelse(min_enddate<="2014-03-31", 1, 0)
+full_ab$EarlyTreat[min_enddate==min_enddate[998]] <- NA
+
+full_ab <- full_ab[, names(full_ab)!="end_dates"]
+
+write.csv(full_ab, file = paste0(box_loc, "/ProcessedData/merged_ab.csv"), row.names = F)
+
+###
+
+tapply(full_ab, INDEX=list(full_ab$village_name), FUN = function(x) summary(x[, "dmsp_pretrend"]))
+
+test <- aggregate(full_ab[, c("population", "dist_to_city", "dmsp_pretrend", "viirs2012max")], by=list(full_ab$village_name), FUN=sd)
+test <- full_ab[full_ab$village_name=="Nablus City",]
+
+
+test2 <- aggregate(full_ab, by=list(full_ab$village_name), FUN=mean)
+test2 <- test2[test2$Group.1 %in% c("Tammoun", "Tayaseer", "Tulkarem", "al-zawya"), ]
+
+View(full_ab[full_ab$village_name=="Tammoun",])
+View(full_ab[full_ab$village_name=="Tayaseer",])
+
+
+###
+
+outcomes <- c("q7001",
+              "q7002",
+              #"q7011",
+              "q707",
+              #"q708",
+              #"q709a",
+              #"q7114",
+              #"q714us",
+              #"q714sa",
+              #"q714is",
+              #"q8341",
+              "q101",
+              "q102",
+              "q2011",
+              "q2013",
+              "q511",
+              "q513",
+              "q5162")
+
+covars <- c("male",
+            "age",
+            "education",
+            "married",
+            "muslim",
+            #"income",
+            "urban",
+            "rural",
+            "refugee_camp",
+            "unemployed",
+            "own_a_car",
+            "population",
+            "dist_to_city",
+            "dmsp_pretrend",
+            "viirs2012max")
+
+
+mod <- list()
+for(i in 1:length(outcomes)) {
+  
+  form <- paste0(outcomes[i], " ~ wave4*treatment + ", paste(covars, collapse = " + "), " + factor(v05aENG)")
+  
+  # mod[i] <- lm(form, data = full_ab[!is.na(full_ab[, outcomes[i]]), ])
+  
+  assign(paste0("mod", i), lm(form, data = full_ab[!is.na(full_ab[, outcomes[i]]), ]))
+  
+}
+
+stargazer(mod1, mod2, type = "html", title = "Regressions", out = "/Users/christianbaehr/Desktop/test.html")
 
 
 
+
+stargazer(test4@data[test4$treatment==0, out_names], type = "latex", title = "Wave IV Domestic Governance Survey Questions (Control Only)",
+          covariate.labels = out_labels, out = paste0(box_loc, "/Results/survey-dg_control_wave4.tex"),
+          digits.extra = 0)
+
+
+
+names(test3)[names(test3)=="v05aENG"] <- "village_name"
+names(test3)[names(test3)=="v04"] <- "district_name"
+
+
+
+
+names(test4)[names(test4)=="v05aENG"] <- "village_name"
+names(test4)[names(test4)=="v04"] <- "district_name"
+
+
+
+
+
+out_names <- c("q7001",
+               "q7002",
+               "q7011",
+               "q707",
+               "q708",
+               "q709a",
+               "q7114",
+               "q714us",
+               "q714sa",
+               "q714is",
+               "q8341")
+
+out_labels <- c("Do you prefer economic relations btwn Pal./US improve",
+                "Do you prefer economic relations btwn Pal./Saudi improve",
+                "How does US influence democracy development in Pal.",
+                "*Ordinary* Americans are generally good people",
+                "American and Western culture has positive aspects",
+                "Do you support the two-state Arab-Israeli solution", 
+                "Is western influence an obstacle to reform in Pal.?",
+                "What country poses greatest threat to your country (US Dummy)",
+                "What country poses greatest threat to your country (Saudi Dummy)",
+                "What country poses greatest threat to your country (ISR Dummy)",
+                "To what degree do you feel angry towards the US?")
+
+out_names <- c("q101",
+               "q102",
+               "q2011",
+               "q2013",
+               "q511",
+               "q513",
+               "q5162")
+
+out_labels <- c("How do you evaluate the current economic state in Pal.?",
+                "Will the economic situation in Pal. be better in 3-5 yrs.?",
+                "To what extent do you trust the government (cabinet)?",
+                "To what extent do you trust the Parliament?",
+                "To what extent is your country democratic?",
+                "How satisfied are you with the governments performance?",
+                "Democratic regimes are indecisive and full of problems. Do you agree?")
+
+
+
+
+full_ab <- merge()
 
 
 
